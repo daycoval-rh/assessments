@@ -1,0 +1,799 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<title>Assessment — Learning Agility | Banco Daycoval</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Playfair+Display:wght@600;700&display=swap" rel="stylesheet">
+<style>
+:root{
+  --navy:#0A1628;--navy2:#0F2040;
+  --gold:#C9A84C;--gold2:#E8C46A;
+  --slate:#8A9BB5;--slate2:#B0BDD0;
+  --white:#FFFFFF;
+  --border:rgba(255,255,255,0.08);
+  --border2:rgba(201,168,76,0.25);
+  --r:12px;--r2:8px;
+}
+*{box-sizing:border-box;margin:0;padding:0;}
+html,body{width:100%;height:100%;font-family:'Inter',sans-serif;background:var(--navy);color:var(--white);overflow:hidden;}
+
+.tela{position:fixed;inset:0;display:none;flex-direction:column;}
+.tela.ativa{display:flex;}
+
+/* INTRO */
+#tIntro{
+  background:linear-gradient(160deg,var(--navy) 0%,var(--navy2) 60%,#0A2040 100%);
+  align-items:center;justify-content:center;padding:40px 24px;
+  overflow-y:auto;-webkit-overflow-scrolling:touch;
+}
+#tIntro::before{content:'';position:fixed;inset:0;pointer-events:none;
+  background:radial-gradient(ellipse at 20% 50%,rgba(201,168,76,0.06) 0%,transparent 60%),
+             radial-gradient(ellipse at 80% 20%,rgba(26,74,138,0.08) 0%,transparent 50%);}
+.intro-inner{position:relative;z-index:1;max-width:560px;width:100%;text-align:center;display:flex;flex-direction:column;align-items:center;}
+.intro-badge{display:inline-flex;align-items:center;background:rgba(201,168,76,0.12);border:1px solid var(--border2);border-radius:40px;padding:6px 18px;margin-bottom:32px;font-size:.72rem;font-weight:600;color:var(--gold2);letter-spacing:1.5px;text-transform:uppercase;}
+.intro-title{font-family:'Playfair Display',serif;font-size:clamp(2rem,5vw,3.4rem);font-weight:700;color:var(--white);line-height:1.15;margin-bottom:12px;}
+.intro-title span{color:var(--gold2);}
+.intro-subtitle{font-size:clamp(.9rem,2vw,1.05rem);color:var(--slate2);max-width:540px;margin-bottom:48px;font-weight:300;line-height:1.75;}
+.intro-stats{display:flex;gap:32px;justify-content:center;flex-wrap:wrap;margin-bottom:48px;}
+.stat-num{font-family:'Playfair Display',serif;font-size:2rem;color:var(--gold2);font-weight:700;}
+.stat-lbl{font-size:.72rem;color:var(--slate);font-weight:500;letter-spacing:.5px;margin-top:2px;}
+.dims-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:12px;max-width:560px;width:100%;margin-bottom:48px;}
+.dim-card{background:rgba(255,255,255,0.04);border:1px solid rgba(255,255,255,0.07);border-radius:var(--r2);padding:16px;text-align:left;}
+.dim-card-label{font-size:.6rem;font-weight:700;letter-spacing:1.5px;text-transform:uppercase;margin-bottom:4px;}
+.dim-card-title{font-size:.85rem;font-weight:600;color:var(--white);margin-bottom:4px;}
+.dim-card-desc{font-size:.72rem;color:var(--slate);line-height:1.5;}
+.dim-card.mental .dim-card-label{color:#6B9FE4;}
+.dim-card.pessoas .dim-card-label{color:#6BCBA0;}
+.dim-card.mudancas .dim-card-label{color:#E4A86B;}
+.dim-card.resultados .dim-card-label{color:#E46B6B;}
+.nm-wrap{width:100%;max-width:400px;margin-bottom:24px;text-align:left;}
+.nm-wrap label{display:block;font-size:.7rem;font-weight:600;color:var(--gold2);letter-spacing:1px;text-transform:uppercase;margin-bottom:8px;}
+.nm-wrap input{width:100%;padding:14px 18px;background:rgba(255,255,255,0.06);border:1px solid rgba(255,255,255,0.15);border-radius:var(--r2);color:var(--white);font-family:'Inter',sans-serif;font-size:.95rem;outline:none;transition:border-color .2s;}
+.nm-wrap input:focus{border-color:var(--gold2);}
+.nm-wrap input::placeholder{color:rgba(255,255,255,0.25);}
+.btn-primary{padding:16px 48px;background:linear-gradient(135deg,var(--gold),var(--gold2));border:none;border-radius:var(--r2);font-family:'Inter',sans-serif;font-size:.9rem;font-weight:700;color:var(--navy);cursor:pointer;transition:all .2s;box-shadow:0 4px 20px rgba(201,168,76,0.3);}
+.btn-primary:disabled{opacity:.35;cursor:not-allowed;}
+.btn-primary:not(:disabled):hover{transform:translateY(-2px);}
+.intro-footer{margin-top:40px;font-size:.65rem;color:rgba(255,255,255,0.2);letter-spacing:.5px;}
+
+/* PERGUNTA */
+#tPergunta{background:var(--navy2);overflow:hidden;}
+.q-topbar{flex-shrink:0;display:flex;align-items:center;justify-content:space-between;padding:14px 24px;border-bottom:1px solid var(--border);background:rgba(10,22,40,0.95);}
+.q-topbar-left{font-family:'Playfair Display',serif;font-size:.95rem;font-weight:600;color:var(--gold2);}
+.q-topbar-right{font-size:.72rem;color:var(--slate);font-weight:600;}
+.q-topbar-right span{color:var(--gold2);}
+.q-prog-wrap{flex-shrink:0;padding:12px 24px 0;background:rgba(10,22,40,0.95);}
+.q-prog-bg{height:2px;background:rgba(255,255,255,0.08);border-radius:2px;overflow:hidden;}
+.q-prog-fill{height:100%;background:linear-gradient(90deg,var(--gold),var(--gold2));border-radius:2px;transition:width .5s cubic-bezier(.4,0,.2,1);}
+.q-dim-strip{display:flex;align-items:center;gap:6px;padding:10px 0 12px;}
+.q-dim-pip{height:3px;flex:1;border-radius:2px;background:rgba(255,255,255,0.1);transition:background .4s;}
+.q-dim-pip.ativo{background:var(--gold2);}
+.q-dim-pip.feito{background:rgba(201,168,76,0.35);}
+.q-dim-nome{font-size:.62rem;font-weight:600;color:var(--slate2);letter-spacing:.5px;margin-left:6px;}
+.q-corpo{flex:1;overflow-y:auto;-webkit-overflow-scrolling:touch;padding:24px 24px 12px;}
+.q-situacao-wrap{background:rgba(201,168,76,0.06);border:1px solid rgba(201,168,76,0.2);border-radius:var(--r2);padding:16px 20px;margin-bottom:24px;}
+.q-situacao-label{font-size:.58rem;font-weight:700;letter-spacing:1.5px;text-transform:uppercase;color:var(--gold2);margin-bottom:6px;}
+.q-situacao-texto{font-size:.88rem;color:var(--slate2);line-height:1.7;font-style:italic;}
+.q-bloco-info{display:flex;align-items:center;gap:10px;margin-bottom:14px;}
+.q-dim-badge{padding:3px 12px;border-radius:20px;font-size:.58rem;font-weight:700;letter-spacing:1px;text-transform:uppercase;}
+.q-dim-badge.mental{background:rgba(107,159,228,0.15);color:#6B9FE4;border:1px solid rgba(107,159,228,0.25);}
+.q-dim-badge.pessoas{background:rgba(107,203,160,0.15);color:#6BCBA0;border:1px solid rgba(107,203,160,0.25);}
+.q-dim-badge.mudancas{background:rgba(228,168,107,0.15);color:#E4A86B;border:1px solid rgba(228,168,107,0.25);}
+.q-dim-badge.resultados{background:rgba(228,107,107,0.15);color:#E46B6B;border:1px solid rgba(228,107,107,0.25);}
+.q-comp-nome{font-size:.62rem;color:var(--slate);font-weight:500;}
+.q-criterio-row{display:flex;align-items:center;gap:8px;margin-bottom:12px;}
+.q-crit-tag{padding:2px 10px;border-radius:4px;font-size:.58rem;font-weight:700;letter-spacing:.8px;text-transform:uppercase;}
+.q-crit-tag.cx{background:rgba(107,159,228,0.12);color:#6B9FE4;}
+.q-crit-tag.fq{background:rgba(107,203,160,0.12);color:#6BCBA0;}
+.q-crit-tag.ip{background:rgba(228,168,107,0.15);color:#E4A86B;}
+.q-crit-peso{font-size:.62rem;color:var(--gold2);font-weight:600;}
+.q-enunciado{font-size:.95rem;font-weight:500;color:var(--white);line-height:1.55;margin-bottom:20px;}
+.q-opcoes{display:flex;flex-direction:column;gap:8px;padding-bottom:8px;}
+.q-opt{display:flex;align-items:flex-start;gap:12px;background:rgba(255,255,255,0.03);border:1px solid rgba(255,255,255,0.08);border-radius:var(--r2);padding:13px 16px;cursor:pointer;transition:all .16s;text-align:left;width:100%;font-family:'Inter',sans-serif;-webkit-tap-highlight-color:transparent;}
+.q-opt:hover:not(.sel){background:rgba(201,168,76,0.06);border-color:rgba(201,168,76,0.25);}
+.q-opt.sel{background:rgba(201,168,76,0.1);border-color:rgba(201,168,76,0.5);}
+.q-opt-letra{width:26px;height:26px;border-radius:50%;flex-shrink:0;display:flex;align-items:center;justify-content:center;font-size:.62rem;font-weight:700;background:rgba(255,255,255,0.07);color:rgba(255,255,255,0.5);transition:all .16s;margin-top:1px;}
+.q-opt.sel .q-opt-letra{background:var(--gold);color:var(--navy);}
+.q-opt-texto{font-size:.82rem;color:rgba(255,255,255,0.75);line-height:1.5;}
+.q-opt.sel .q-opt-texto{color:var(--gold2);font-weight:500;}
+.q-nav{flex-shrink:0;display:flex;align-items:center;gap:12px;padding:14px 24px 24px;border-top:1px solid var(--border);background:rgba(10,22,40,0.95);}
+.btn-voltar{padding:12px 20px;background:transparent;border:1px solid rgba(255,255,255,0.15);border-radius:var(--r2);font-family:'Inter',sans-serif;font-size:.8rem;font-weight:500;color:var(--slate2);cursor:pointer;transition:all .18s;white-space:nowrap;}
+.btn-voltar:hover{border-color:rgba(255,255,255,0.3);color:var(--white);}
+.q-dica{flex:1;font-size:.65rem;color:var(--slate);text-align:center;}
+.btn-continuar{flex:1;max-width:220px;padding:13px 24px;background:linear-gradient(135deg,var(--gold),var(--gold2));border:none;border-radius:var(--r2);font-family:'Inter',sans-serif;font-size:.82rem;font-weight:700;color:var(--navy);cursor:pointer;transition:all .18s;box-shadow:0 3px 14px rgba(201,168,76,0.25);}
+.btn-continuar:disabled{opacity:.35;cursor:not-allowed;}
+.btn-continuar:not(:disabled):hover{transform:translateY(-1px);}
+
+/* RESULTADO */
+#tResultado{background:var(--navy);overflow-y:auto;-webkit-overflow-scrolling:touch;}
+.res-inner{max-width:760px;margin:0 auto;padding:48px 20px 80px;}
+.result-header{text-align:center;margin-bottom:48px;}
+.result-header .badge{display:inline-block;padding:5px 18px;border-radius:40px;background:rgba(201,168,76,0.12);border:1px solid var(--border2);font-size:.65rem;font-weight:700;color:var(--gold2);letter-spacing:1.5px;text-transform:uppercase;margin-bottom:20px;}
+.result-name{font-family:'Playfair Display',serif;font-size:clamp(1.6rem,4vw,2.4rem);font-weight:700;color:var(--white);margin-bottom:6px;}
+.result-subtitle{font-size:.9rem;color:var(--slate2);}
+
+/* Card de classificação */
+.classification-card{border-radius:var(--r);overflow:hidden;margin-bottom:32px;border:1px solid rgba(255,255,255,0.06);}
+.class-header{padding:28px 32px;text-align:center;}
+.class-header.potencial{background:linear-gradient(135deg,#1A3A6A,#0F2248);}
+.class-header.consistente{background:linear-gradient(135deg,#2A4A1A,#182E0E);}
+.class-header.diferenciado{background:linear-gradient(135deg,#4A2A0A,#2E1A06);}
+.class-label-sm{font-size:.62rem;font-weight:700;letter-spacing:2px;text-transform:uppercase;margin-bottom:8px;opacity:.7;}
+.class-title{font-family:'Playfair Display',serif;font-size:clamp(1.8rem,5vw,2.8rem);font-weight:700;margin-bottom:6px;}
+.class-title.potencial{color:#6B9FE4;}
+.class-title.consistente{color:#6BCBA0;}
+.class-title.diferenciado{color:var(--gold2);}
+.class-score{font-size:1rem;font-weight:500;opacity:.7;}
+.class-body{background:rgba(255,255,255,0.03);padding:24px 32px;}
+.class-desc{font-size:.88rem;color:var(--slate2);line-height:1.75;}
+
+/* 3 pilares — grid fixo */
+.pilares-titulo{font-size:.7rem;font-weight:700;color:var(--gold2);letter-spacing:1.5px;text-transform:uppercase;margin-bottom:16px;}
+.pilares-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:14px;margin-bottom:32px;}
+.pilar-card{background:rgba(255,255,255,0.03);border:1px solid rgba(255,255,255,0.06);border-radius:var(--r2);padding:18px 16px;text-align:center;}
+.pilar-nome{font-size:.72rem;font-weight:700;color:var(--gold2);letter-spacing:.5px;margin-bottom:8px;}
+.pilar-classe{font-family:'Playfair Display',serif;font-size:1.05rem;font-weight:700;margin-bottom:6px;}
+.pilar-classe.potencial{color:#6B9FE4;}
+.pilar-classe.consistente{color:#6BCBA0;}
+.pilar-classe.diferenciado{color:var(--gold2);}
+.pilar-score{font-size:.72rem;color:var(--slate);margin-bottom:10px;}
+.pilar-bar-bg{height:5px;background:rgba(255,255,255,0.07);border-radius:3px;overflow:hidden;}
+.pilar-bar-fill{height:100%;border-radius:3px;transition:width 1s ease;width:0%;}
+.pilar-card.mental .pilar-bar-fill{background:linear-gradient(90deg,#3A6FA8,#6B9FE4);}
+.pilar-card.pessoas .pilar-bar-fill{background:linear-gradient(90deg,#2A8A65,#6BCBA0);}
+.pilar-card.mudancas .pilar-bar-fill{background:linear-gradient(90deg,#A87040,#E4A86B);}
+.pilar-card.resultados .pilar-bar-fill{background:linear-gradient(90deg,#A84040,#E46B6B);}
+
+/* Dimensões por barra */
+.dims-result{margin-bottom:32px;}
+.dims-result-title{font-size:.7rem;font-weight:700;color:var(--gold2);letter-spacing:1.5px;text-transform:uppercase;margin-bottom:16px;}
+.dim-result-card{background:rgba(255,255,255,0.03);border:1px solid rgba(255,255,255,0.06);border-radius:var(--r2);padding:16px 20px;margin-bottom:10px;}
+.dim-result-top{display:flex;justify-content:space-between;align-items:center;margin-bottom:8px;}
+.dim-result-name{font-size:.82rem;font-weight:600;color:var(--white);}
+.dim-result-pct{font-size:.82rem;font-weight:700;}
+.dim-bar-bg{height:5px;background:rgba(255,255,255,0.07);border-radius:3px;overflow:hidden;margin-bottom:6px;}
+.dim-bar-fill{height:100%;border-radius:3px;transition:width 1s ease;width:0%;}
+.dim-result-class{font-size:.65rem;color:var(--slate);}
+.dim-result-card.mental .dim-result-pct{color:#6B9FE4;}.dim-result-card.mental .dim-bar-fill{background:linear-gradient(90deg,#3A6FA8,#6B9FE4);}
+.dim-result-card.pessoas .dim-result-pct{color:#6BCBA0;}.dim-result-card.pessoas .dim-bar-fill{background:linear-gradient(90deg,#2A8A65,#6BCBA0);}
+.dim-result-card.mudancas .dim-result-pct{color:#E4A86B;}.dim-result-card.mudancas .dim-bar-fill{background:linear-gradient(90deg,#A87040,#E4A86B);}
+.dim-result-card.resultados .dim-result-pct{color:#E46B6B;}.dim-result-card.resultados .dim-bar-fill{background:linear-gradient(90deg,#A84040,#E46B6B);}
+
+/* Comp table */
+.comp-table{margin-bottom:32px;}
+.comp-table-title{font-size:.7rem;font-weight:700;color:var(--gold2);letter-spacing:1.5px;text-transform:uppercase;margin-bottom:14px;}
+.comp-row{display:grid;grid-template-columns:1fr 60px 60px 60px;gap:4px;align-items:center;padding:12px 16px;border-bottom:1px solid rgba(255,255,255,0.04);font-size:.78rem;}
+.comp-row.head{font-size:.62rem;font-weight:700;color:var(--slate);letter-spacing:.8px;text-transform:uppercase;padding-bottom:8px;}
+.comp-row .cv,.comp-row.head div:not(:first-child){text-align:center;width:60px;}
+.comp-row .cn{color:var(--white);font-weight:500;}
+.comp-row .cv{text-align:center;font-weight:600;}
+.comp-row .cv.cx{color:#6B9FE4;}.comp-row .cv.fq{color:#6BCBA0;}.comp-row .cv.ip{color:#E4A86B;}
+
+/* Metodologia */
+.methodology{background:rgba(255,255,255,0.02);border:1px solid rgba(255,255,255,0.05);border-radius:var(--r);padding:24px 28px;margin-bottom:32px;}
+.methodology h3{font-size:.7rem;font-weight:700;color:var(--gold2);letter-spacing:1.5px;text-transform:uppercase;margin-bottom:14px;}
+.method-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:12px;}
+.method-item{text-align:center;padding:12px;}
+.method-item-label{font-size:.62rem;font-weight:700;color:var(--slate2);letter-spacing:.8px;text-transform:uppercase;margin-bottom:4px;}
+.method-item-weight{font-size:1.2rem;font-weight:700;color:var(--gold2);font-family:'Playfair Display',serif;}
+.method-item-desc{font-size:.65rem;color:var(--slate);margin-top:3px;}
+.actions{display:flex;gap:12px;flex-wrap:wrap;justify-content:center;}
+.btn-action{padding:14px 32px;border-radius:var(--r2);font-family:'Inter',sans-serif;font-size:.82rem;font-weight:600;cursor:pointer;transition:all .18s;}
+.btn-action.primary{background:linear-gradient(135deg,var(--gold),var(--gold2));color:var(--navy);border:none;}
+.btn-action.primary:hover{transform:translateY(-1px);}
+.btn-action.ghost{background:transparent;border:1px solid rgba(255,255,255,0.18);color:var(--slate2);}
+.btn-action.ghost:hover{border-color:rgba(255,255,255,0.35);color:var(--white);}
+.result-credit{text-align:center;margin-top:32px;font-size:.62rem;color:rgba(255,255,255,0.18);}
+
+/* PRINT - colorido e completo */
+@media print{
+  *{-webkit-print-color-adjust:exact!important;print-color-adjust:exact!important;}
+  html,body{overflow:visible!important;height:auto!important;background:#0A1628!important;}
+  .tela{position:static!important;display:none!important;height:auto!important;overflow:visible!important;}
+  #tResultado{display:block!important;overflow:visible!important;background:#0A1628!important;}
+  .res-inner{padding:20px!important;max-width:100%!important;}
+  .classification-card{break-inside:avoid;}
+  .pilares-grid{break-inside:avoid;}
+  .dim-result-card{break-inside:avoid;}
+  .actions{display:none!important;}
+  .result-credit{color:rgba(255,255,255,0.4)!important;}
+  .pilar-bar-fill,.dim-bar-fill{-webkit-print-color-adjust:exact!important;}
+}
+</style>
+</head>
+<body>
+
+<!-- INTRO -->
+<div class="tela ativa" id="tIntro">
+  <div class="intro-inner">
+    <div class="intro-badge">Assessment de Potencial</div>
+    <h1 class="intro-title">Learning <span>Agility</span></h1>
+    <p class="intro-subtitle">Avaliação comportamental baseada nas quatro dimensões de agilidade de aprendizagem. Responda com base no que você genuinamente observa sobre si mesmo em situações reais de trabalho.</p>
+    <div class="intro-stats">
+      <div><div class="stat-num">4</div><div class="stat-lbl">Dimensões</div></div>
+      <div><div class="stat-num">12</div><div class="stat-lbl">Competências</div></div>
+      <div><div class="stat-num">36</div><div class="stat-lbl">Questões</div></div>
+      <div><div class="stat-num">~15</div><div class="stat-lbl">Minutos</div></div>
+    </div>
+    <div class="dims-grid">
+      <div class="dim-card mental"><div class="dim-card-label">Agilidade Mental</div><div class="dim-card-title">Criatividade · Análise · Raciocínio</div><div class="dim-card-desc">Processa informações rapidamente e encontra soluções em cenários complexos.</div></div>
+      <div class="dim-card pessoas"><div class="dim-card-label">Agilidade com Pessoas</div><div class="dim-card-title">Comunicação · Empatia · Influência</div><div class="dim-card-desc">Relaciona-se efetivamente e navega bem em contextos interpessoais.</div></div>
+      <div class="dim-card mudancas"><div class="dim-card-label">Agilidade com Mudanças</div><div class="dim-card-title">Mudança · Resiliência · Emoção</div><div class="dim-card-desc">Adapta-se com facilidade e lidera esforços em ambientes dinâmicos.</div></div>
+      <div class="dim-card resultados"><div class="dim-card-label">Agilidade com Resultados</div><div class="dim-card-title">Resultados · Planejamento · Prioridades</div><div class="dim-card-desc">Entrega consistência mesmo em situações adversas e com recursos limitados.</div></div>
+    </div>
+    <div class="nm-wrap">
+      <label>Seu nome completo</label>
+      <input type="text" id="nameInput" placeholder="Como gostaria de ser identificado?" maxlength="60">
+    </div>
+    <button class="btn-primary" id="btnStart" disabled onclick="iniciar()">Iniciar Assessment</button>
+    <div class="intro-footer">Banco Daycoval · Atração &amp; Seleção · Desenvolvido por Gabriel Gatto</div>
+  </div>
+</div>
+
+<!-- PERGUNTA -->
+<div class="tela" id="tPergunta">
+  <div class="q-topbar">
+    <div class="q-topbar-left">Learning Agility</div>
+    <div class="q-topbar-right">Questão <span id="qNum">1</span> de 36</div>
+  </div>
+  <div class="q-prog-wrap">
+    <div class="q-prog-bg"><div class="q-prog-fill" id="qProgFill" style="width:0%"></div></div>
+    <div class="q-dim-strip">
+      <div class="q-dim-pip" id="pip0"></div>
+      <div class="q-dim-pip" id="pip1"></div>
+      <div class="q-dim-pip" id="pip2"></div>
+      <div class="q-dim-pip" id="pip3"></div>
+      <div class="q-dim-nome" id="pipNome">Agilidade Mental</div>
+    </div>
+  </div>
+  <div class="q-corpo" id="qCorpo"></div>
+  <div class="q-nav">
+    <button class="btn-voltar" id="btnVoltar" onclick="voltar()">&#8592; Voltar</button>
+    <div class="q-dica" id="qDica">Selecione uma opção para continuar</div>
+    <button class="btn-continuar" id="btnCont" disabled onclick="avancar()">Continuar &#8594;</button>
+  </div>
+</div>
+
+<!-- RESULTADO -->
+<div class="tela" id="tResultado">
+  <div class="res-inner">
+    <div class="result-header">
+      <div class="badge">Assessment Concluído</div>
+      <div class="result-name" id="resName">—</div>
+      <div class="result-subtitle">Learning Agility — Avaliação de Potencial</div>
+    </div>
+    <div class="classification-card">
+      <div class="class-header potencial" id="classHeader">
+        <div class="class-label-sm">Classificação Geral de Potencial</div>
+        <div class="class-title potencial" id="classTitle">—</div>
+        <div class="class-score" id="classScore">Score: —</div>
+      </div>
+      <div class="class-body"><div class="class-desc" id="classDesc"></div></div>
+    </div>
+
+    <!-- 3 PILARES -->
+    <div class="pilares-titulo">Resultado por Pilar</div>
+    <div class="pilares-grid" id="pilaresGrid"></div>
+
+    <!-- BARRAS POR DIMENSÃO -->
+    <div class="dims-result">
+      <div class="dims-result-title">Detalhamento por Dimensão</div>
+      <div id="dimCards"></div>
+    </div>
+
+    <!-- TABELA COMPETÊNCIAS -->
+    <div class="comp-table">
+      <div class="comp-table-title">Detalhe por Competência</div>
+      <div class="comp-row head"><div>Competência</div><div class="cv cx">Compl.</div><div class="cv fq">Freq.</div><div class="cv ip">Impacto</div></div>
+      <div id="compRows"></div>
+    </div>
+
+
+    <div class="actions">
+      <button class="btn-action ghost" onclick="imprimirResultado()">Salvar como PDF</button>
+      <button class="btn-action primary" onclick="reiniciar()">Fazer Novamente</button>
+    </div>
+    <div class="result-credit">Learning Agility Assessment · Banco Daycoval · por Gabriel Gatto</div>
+  </div>
+</div>
+
+<script>
+// ══════════════════════════════════════════
+// DADOS — atualizados conforme documento Paula
+// ══════════════════════════════════════════
+var CX=[1,4,8,12], FQ=[1,4,8,12], IP=[2,8,16,24];
+
+var BLOCOS=[
+  {dim:'mental',dimNome:'Agilidade Mental',comp:'Criatividade e Inovação',
+   sit:'Você participa de um time de trabalho que enfrenta um impasse com relação a um assunto que nenhum dos membros da equipe conseguiu resolver nos últimos dias.',
+   qs:[
+    {crit:'cx',enun:'Em uma situação como esta, você:',sc:CX,
+     opts:['Propõe soluções conhecidas ou já utilizadas em situações semelhantes.',
+           'Sugere pequenos ajustes ou alternativas diferentes com base em experiências anteriores.',
+           'Consegue combinar novas ideias e conceitos já conhecidos sobre o assunto para dar uma solução.',
+           'Cria soluções originais e experimenta novos caminhos para resolver o impasse.']},
+    {crit:'fq',enun:'Em situações como esta, você geralmente:',sc:FQ,
+     opts:['Costuma esperar por ajuda de pessoas com maior conhecimento ou experiência.',
+           'Ocasionalmente propõe alguma solução diferente.',
+           'Frequentemente se sente desafiado a trazer ideias novas.',
+           'Sempre apresenta soluções e contribui ativamente para resolver o impasse e melhorar a entrega.']},
+    {crit:'ip',enun:'Em uma situação como esta, suas ações:',sc:IP,
+     opts:['Contribuem de maneira pontual.',
+           'Agregam melhorias incrementais.',
+           'Ajudam o grupo a avançar significativamente.',
+           'Mudam o rumo do trabalho ou aceleram a solução.']}
+  ]},
+  {dim:'mental',dimNome:'Agilidade Mental',comp:'Análise Crítica',
+   sit:'Você recebe dados conflitantes sobre um problema que precisa ser resolvido no mesmo dia.',
+   qs:[
+    {crit:'cx',enun:'Em uma situação como esta, você:',sc:CX,
+     opts:['Procura resolver o problema considerando apenas a informação disponível.',
+           'Analisa 2 ou 3 variáveis ou informações de forma mais detalhada.',
+           'Busca novas e diferentes fontes para identificar padrões.',
+           'Identifica correlações não óbvias e considera múltiplas análises e variáveis para a decisão.']},
+    {crit:'fq',enun:'Em situações como esta, você geralmente:',sc:FQ,
+     opts:['Utiliza dados disponíveis, mas não busca analisar dados de forma aprofundada.',
+           'Analisa criticamente os dados e informações, mas somente quando tem tempo.',
+           'Busca novas conexões e verifica a consistência das informações.',
+           'Analisa criticamente e busca complementar os dados com outras informações e perguntas relevantes.']},
+    {crit:'ip',enun:'Em uma situação como esta, suas ações:',sc:IP,
+     opts:['Ajudam na análise para identificar os pontos principais de divergência, mas nem sempre estão completas.',
+           'Contribuem na redução de incertezas, mas sem definir caminhos.',
+           'Geram entendimento claro dos dados para tomada de decisão.',
+           'Redefinem prioridades e elevam muito a qualidade das informações para uma decisão final.']}
+  ]},
+  {dim:'mental',dimNome:'Agilidade Mental',comp:'Rapidez de Raciocínio',
+   sit:'Você e seu time precisam adaptar imediatamente seu foco de atuação e atividades após uma mudança inesperada do mercado.',
+   qs:[
+    {crit:'cx',enun:'Em uma situação como esta, você:',sc:CX,
+     opts:['Busca mais clareza e informações sobre a mudança para analisar o que deve ser ajustado.',
+           'Entende questões críticas e busca apoio para revisar o plano.',
+           'Assimila e analisa cenários dentro de parâmetros conhecidos, avalia impactos da mudança e propõe soluções.',
+           'Lida com as múltiplas incertezas, mas consegue analisar e reorganizar suas prioridades.']},
+    {crit:'fq',enun:'Em situações como esta, você geralmente:',sc:FQ,
+     opts:['Responde rapidamente se receber informações bem detalhadas.',
+           'Consegue reagir de forma ágil, dependendo da complexidade da situação.',
+           'Responde rápido mesmo com as informações e recursos que tem.',
+           'Responde prontamente e de forma consistente, mesmo em cenários ambíguos.']},
+    {crit:'ip',enun:'Em uma situação como esta, suas ações:',sc:IP,
+     opts:['Contribuem parcialmente sem um direcionamento ou orientação mais clara.',
+           'Ajudam na revisão e na execução, mas sem direcionar.',
+           'Aceleram o time a agir para implementar os ajustes necessários.',
+           'Redirecionam ações, reduzem risco da tomada de decisão e evitam retrabalho.']}
+  ]},
+  {dim:'pessoas',dimNome:'Agilidade com Pessoas',comp:'Comunicação Efetiva',
+   sit:'Você precisa explicar um determinado processo ou atividade para diferentes públicos e áreas.',
+   qs:[
+    {crit:'cx',enun:'Em uma situação como esta, você:',sc:CX,
+     opts:['Consegue explicar apenas temas que tem domínio.',
+           'Explica temas moderadamente complexos, que não são necessariamente de seu domínio, mas sem profundidade.',
+           'Comunica conceitos complexos de forma clara para públicos distintos.',
+           'Constrói narrativas elaboradas e completas, conectando perspectivas, benefícios e impactos para as áreas e para o negócio.']},
+    {crit:'fq',enun:'Em situações como esta, você geralmente:',sc:FQ,
+     opts:['Utiliza a comunicação que está disponível.',
+           'Faz alguns ajustes e adaptações na mensagem conforme o público.',
+           'Adapta sempre mensagem, o canal e a abordagem.',
+           'Personaliza com clareza a comunicação para os diferentes públicos, mesmo em temas complexos.']},
+    {crit:'ip',enun:'Em uma situação como esta, suas ações:',sc:IP,
+     opts:['Comunicam, mas não solucionam todas as dúvidas sobre a execução do processo.',
+           'Transmitem a mensagem, mas não garantem adesão ao novo processo.',
+           'Facilitam entendimento e alinhamento sobre como executar o processo.',
+           'Engajam os grupos e aceleram a implementação do processo.']}
+  ]},
+  {dim:'pessoas',dimNome:'Agilidade com Pessoas',comp:'Empatia e Relacionamento Interpessoal',
+   sit:'Dois colegas entram em conflito em uma reunião, impedindo a tomada de uma decisão importante.',
+   qs:[
+    {crit:'cx',enun:'Em uma situação como esta, você:',sc:CX,
+     opts:['Escuta as partes envolvidas, mas sem intervir.',
+           'Procura atuar na facilitação do entendimento das divergências.',
+           'Lida bem em conflitos entre pessoas e interesses diferentes e intervém como mediador.',
+           'Consegue facilitar conflitos complexos com vários interlocutores e agendas divergentes.']},
+    {crit:'fq',enun:'Em situações como esta, você geralmente:',sc:FQ,
+     opts:['Evita se envolver.',
+           'Ajuda na mediação apenas quando solicitado.',
+           'Atua para promover diálogo e entendimento.',
+           'Intervém de forma construtiva e respeitosa, ajudando a resolver tensões.']},
+    {crit:'ip',enun:'Em uma situação como esta, suas ações:',sc:IP,
+     opts:['Geralmente não têm impacto direto na resolução do conflito.',
+           'Ajudam parcialmente na resolução do conflito.',
+           'Reduzem tensões e facilitam acordos e a colaboração.',
+           'Recuperam a confiança e destravam decisões importantes.']}
+  ]},
+  {dim:'pessoas',dimNome:'Agilidade com Pessoas',comp:'Influência',
+   sit:'Você precisa convencer outras áreas a apoiarem em uma demanda ou atividade, necessária para você entregar seus desafios, mas que não foi considerada originalmente no plano de trabalho destas áreas.',
+   qs:[
+    {crit:'cx',enun:'Em uma situação como esta, você:',sc:CX,
+     opts:['Busca influenciar desde que o interlocutor seja conhecido ou acessível.',
+           'Busca persuadir os interlocutores, mesmo quando não os conhece, em contextos controlados e reuniões individuais.',
+           'Alinha e influencia diferentes grupos com abordagens e agendas de reuniões distintas.',
+           'Constrói alianças estratégicas em diferentes áreas e níveis da organização, conseguindo influenciar mesmo em situações de conflito com alta exposição.']},
+    {crit:'fq',enun:'Em situações como esta, você geralmente:',sc:FQ,
+     opts:['Prefere que outra pessoa interfira ou influencie a decisão.',
+           'Influencia apenas quando observa que já existe uma predisposição.',
+           'Busca e utiliza argumentos sólidos e constrói alianças.',
+           'Influencia diversos níveis e áreas mesmo em cenários complexos ou resistentes.']},
+    {crit:'ip',enun:'Em uma situação como esta, suas ações:',sc:IP,
+     opts:['Influenciam um pouco o desfecho.',
+           'Contribuem com pequenos avanços.',
+           'Geram adesão relevante das áreas quanto a demanda.',
+           'Garantem alinhamento decisivo e aceleram a execução.']}
+  ]},
+  {dim:'mudancas',dimNome:'Agilidade com Mudanças',comp:'Agente de Mudança',
+   sit:'A empresa implementa um novo processo e você precisa orientar um grupo de pessoas ou clientes sobre a mudança, mesmo sem ter todas as respostas.',
+   qs:[
+    {crit:'cx',enun:'Em uma situação como esta, você:',sc:CX,
+     opts:['Consegue adaptar a comunicação de mudanças se ela for simples.',
+           'Comunica e gerencia mudanças se tiver alguma orientação.',
+           'Atua bem na gestão de mudanças tanto em relação à orientação de times quanto na definição de ações.',
+           'Lidera mudanças independente de sua complexidade em times multifuncionais.']},
+    {crit:'fq',enun:'Em situações como esta, você geralmente:',sc:FQ,
+     opts:['Evita atuar em situações como estas.',
+           'Atua somente quando demandado.',
+           'Consegue mobilizar pessoas na mudança.',
+           'É uma referência na mobilização para a mudança, mesmo na incerteza.']},
+    {crit:'ip',enun:'Em uma situação como esta, suas ações:',sc:IP,
+     opts:['Influenciam um pouco o ritmo da mudança.',
+           'Geram algumas adesões e ações.',
+           'Mobilizam pessoas e recursos.',
+           'Aceleram a adoção e direcionam a transição de forma clara.']}
+  ]},
+  {dim:'mudancas',dimNome:'Agilidade com Mudanças',comp:'Resiliência',
+   sit:'Uma entrega ou projeto importante sofre um problema inesperado de grande impacto, gerando um aumento do nível de cobrança e pressão intensa.',
+   qs:[
+    {crit:'cx',enun:'Em uma situação como esta, você:',sc:CX,
+     opts:['Tolera pequenos contratempos.',
+           'Consegue gerenciar situações desde que o impacto seja moderado.',
+           'Está acostumado a lidar com múltiplos problemas simultâneos.',
+           'Se mantém positivo ao encarar cenários críticos.']},
+    {crit:'fq',enun:'Em situações como esta, você geralmente:',sc:FQ,
+     opts:['Tem receio em lidar com problemas inesperados.',
+           'Mantém postura construtiva em algumas situações.',
+           'Absorve pressões e segue buscando soluções.',
+           'Transforma falhas e problemas em aprendizado e desafios.']},
+    {crit:'ip',enun:'Em uma situação como esta, suas ações:',sc:IP,
+     opts:['Geram pouco efeito no time frente ao problema ocorrido.',
+           'Mantêm uma estabilidade mínima no time e nas atividades.',
+           'Ajudam as pessoas a lidarem com a pressão e a manter o foco no resultado final.',
+           'Recuperam o moral do time e conduzem para alternativas eficazes.']}
+  ]},
+  {dim:'mudancas',dimNome:'Agilidade com Mudanças',comp:'Gestão Emocional',
+   sit:'Durante uma situação de crise, várias áreas solicitam informações e respostas rápidas, aumentando a tensão e os conflitos internos.',
+   qs:[
+    {crit:'cx',enun:'Em uma situação como esta, você:',sc:CX,
+     opts:['Lida bem apenas em situações de pressão controlada.',
+           'Consegue manter foco em situações conflituosas e de pressão moderada.',
+           'Atua bem em situações de conflitos e pressões elevadas.',
+           'Mantém equilíbrio mesmo em situações urgentes e grandes crises.']},
+    {crit:'fq',enun:'Em situações como esta, você geralmente:',sc:FQ,
+     opts:['Sente que seu equilíbrio é afetado, impactando suas ações e decisões.',
+           'Mantém o controle na maior parte das vezes.',
+           'Consegue manter a racionalidade sob pressão.',
+           'Atua com autoconsciência de forma consistente e regula bem suas emoções.']},
+    {crit:'ip',enun:'Em uma situação como esta, suas ações:',sc:IP,
+     opts:['Ajudam a aliviar as tensões e ansiedades parcialmente.',
+           'Conseguem manter a estabilidade do grupo.',
+           'Reduzem a ansiedade do grupo.',
+           'Restabelecem o foco, clareza e estabilidade emocional da equipe.']}
+  ]},
+  {dim:'resultados',dimNome:'Agilidade com Resultados',comp:'Orientação para Resultados',
+   sit:'Você e seu time recebem uma nova demanda urgente e de curto prazo, concorrendo com outras importantes entregas de forma simultânea.',
+   qs:[
+    {crit:'cx',enun:'Em uma situação como esta, você:',sc:CX,
+     opts:['Executa apenas o que estava combinado para garantir as entregas.',
+           'Reprioriza tarefas garantindo parte do que estava combinado e incluindo a nova demanda.',
+           'Consegue integrar diferentes frentes de trabalho para entregar o acordado e a nova demanda.',
+           'Atua em múltiplas atividades e projetos garantindo os resultados esperados.']},
+    {crit:'fq',enun:'Em situações como esta, você geralmente:',sc:FQ,
+     opts:['Entrega parte dos resultados.',
+           'Cumpre sempre as entregas acordadas.',
+           'Frequentemente entrega várias atividades com boa qualidade.',
+           'Mantém alta performance consistente mesmo frente a novas demandas.']},
+    {crit:'ip',enun:'Em uma situação como esta, suas ações:',sc:IP,
+     opts:['Impactam o resultado final do que estava acordado.',
+           'Entregam o necessário.',
+           'Geram resultados relevantes dentro do acordado.',
+           'Elevam o desempenho geral e aceleram entregas.']}
+  ]},
+  {dim:'resultados',dimNome:'Agilidade com Resultados',comp:'Planejamento e Organização',
+   sit:'Você precisa estruturar um plano de ação com limitações de tempo e recursos.',
+   qs:[
+    {crit:'cx',enun:'Em uma situação como esta, você:',sc:CX,
+     opts:['Foca na organização de rotinas e tarefas simples.',
+           'Organiza atividades e projetos.',
+           'Orquestra diferentes atividades, prazos e recursos.',
+           'Planeja cenários complexos e cria contingências.']},
+    {crit:'fq',enun:'Em situações como esta, você geralmente:',sc:FQ,
+     opts:['Replica planos anteriores.',
+           'Planeja uma visão geral com as principais ações.',
+           'Planeja de forma detalhada e se adaptando ao contexto.',
+           'Estrutura planos robustos, antecipando riscos e impactos.']},
+    {crit:'ip',enun:'Em uma situação como esta, suas ações:',sc:IP,
+     opts:['Adequam o plano frente aos imprevistos, mas eventualmente com algum atraso nas entregas.',
+           'Garantem as entregas mínimas.',
+           'Asseguram um fluxo de trabalho eficiente.',
+           'Otimizam os recursos, reduzem riscos e melhoram resultados.']}
+  ]},
+  {dim:'resultados',dimNome:'Agilidade com Resultados',comp:'Gestão de Prioridades',
+   sit:'Você recebe diversas demandas urgentes de áreas diferentes no mesmo dia.',
+   qs:[
+    {crit:'cx',enun:'Em uma situação como esta, você:',sc:CX,
+     opts:['Prefere lidar com uma demanda por vez.',
+           'Prioriza conforme o demandante ou necessidade do dia.',
+           'Reorganiza suas ações mesmo com múltiplas demandas simultâneas.',
+           'Prioriza as demandas de acordo com contextos de alta complexidade, dependências e pressão.']},
+    {crit:'fq',enun:'Em situações como esta, você:',sc:FQ,
+     opts:['Geralmente mantém o plano e atividades conforme programado.',
+           'Prioriza apenas as demandas urgentes de menor complexidade.',
+           'Sempre diferencia e prioriza de acordo com a importância e urgência.',
+           'Consistentemente reorganiza prioridades com base em impacto, contexto e riscos.']},
+    {crit:'ip',enun:'Em uma situação como esta, suas contribuições:',sc:IP,
+     opts:['Garantem a entrega apenas da principal demanda ou prioridade.',
+           'Garantem a entrega de tudo o que foi previamente combinado e renegocia as demais.',
+           'Entregam resultados das demandas adicionais de maneira consistente.',
+           'Garantem resultados com impacto positivo para os demandantes.']}
+  ]}
+];
+
+// Classificações atualizadas
+var PROFILES={
+  potencial:{
+    label:'Potencial',
+    desc:'Você atua com segurança e consistência em contextos semelhantes aos que já domina. Sua trajetória demonstra solidez e capacidade de entrega em cenários conhecidos. O próximo passo de desenvolvimento envolve ampliar a exposição a desafios de maior complexidade e ambiguidade, expandindo progressivamente seu repertório de atuação.'
+  },
+  consistente:{
+    label:'Consistente',
+    desc:'Você demonstra capacidade de aprender e entregar em contextos novos e de maior complexidade. Transita bem entre diferentes áreas e temas, respondendo a desafios além da sua zona de conforto. Sua agilidade de aprendizagem está em desenvolvimento consistente, com potencial para assumir responsabilidades mais amplas e projetos de maior escopo.'
+  },
+  diferenciado:{
+    label:'Diferenciado',
+    desc:'Você demonstra forte capacidade de aprendizado e entrega em múltiplos contextos, com comportamentos consistentes nas quatro dimensões da agilidade. Está pronto para atuar em níveis superiores de complexidade e responsabilidade, com alta capacidade de adaptação, impacto e performance em cenários ambíguos e estratégicos. Referência de liderança e desenvolvimento acelerado.'
+  }
+};
+
+var DIMS=['mental','pessoas','mudancas','resultados'];
+var DNOMES={mental:'Agilidade Mental',pessoas:'Agilidade com Pessoas',mudancas:'Agilidade com Mudanças',resultados:'Agilidade com Resultados'};
+var CNOMES={cx:'Complexidade',fq:'Frequência',ip:'Impacto'};
+
+// Embaralhar as 36 questões mantendo o mapeamento para o cálculo correto
+function embaralharQS(){
+  var lista=[];
+  BLOCOS.forEach(function(b,bi){
+    b.qs.forEach(function(q,qi){
+      lista.push({dim:b.dim,dimNome:b.dimNome,comp:b.comp,sit:b.sit,
+                  bloIdx:bi,qIdx:qi,crit:q.crit,enun:q.enun,sc:q.sc,opts:q.opts});
+    });
+  });
+  // Fisher-Yates shuffle
+  for(var i=lista.length-1;i>0;i--){
+    var j=Math.floor(Math.random()*(i+1));
+    var tmp=lista[i]; lista[i]=lista[j]; lista[j]=tmp;
+  }
+  return lista;
+}
+
+var QS=[];
+var qAtual=0, respostas={}, nomeJogador='';
+
+// Classificar por score
+function classificar(score){
+  if(score<=240) return 'potencial';
+  if(score<560) return 'consistente';
+  return 'diferenciado';
+}
+
+document.getElementById('nameInput').addEventListener('input',function(){
+  nomeJogador=this.value.trim();
+  document.getElementById('btnStart').disabled=nomeJogador.length<2;
+});
+document.getElementById('nameInput').addEventListener('touchend',function(){this.focus();},{passive:true});
+
+function iniciar(){
+  QS=embaralharQS();
+  qAtual=0; respostas={};
+  mostrarTela('tPergunta');
+  renderQ();
+}
+
+function renderQ(){
+  var q=QS[qAtual];
+  var total=QS.length;
+  document.getElementById('qNum').textContent=qAtual+1;
+  document.getElementById('qProgFill').style.width=Math.round(qAtual/total*100)+'%';
+
+  var dimIdx=DIMS.indexOf(q.dim);
+  DIMS.forEach(function(_,i){
+    var pip=document.getElementById('pip'+i);
+    pip.className='q-dim-pip'+(i<dimIdx?' feito':i===dimIdx?' ativo':'');
+  });
+  document.getElementById('pipNome').textContent=q.dimNome;
+  document.getElementById('btnVoltar').style.visibility=qAtual===0?'hidden':'visible';
+
+  var jaResp=respostas[qAtual]!==undefined;
+  document.getElementById('btnCont').disabled=!jaResp;
+  document.getElementById('btnCont').textContent=qAtual===total-1?'Ver Resultado →':'Continuar →';
+  document.getElementById('qDica').textContent=jaResp?'':'Selecione uma opção para continuar';
+
+  var html='';
+  html+='<div class="q-situacao-wrap">';
+  html+='<div class="q-situacao-label">Contexto</div>';
+  html+='<div class="q-situacao-texto">'+q.sit+'</div>';
+  html+='</div>';
+
+  html+='<div class="q-enunciado">'+q.enun+'</div>';
+  html+='<div class="q-opcoes">';
+  var letras=['A','B','C','D'];
+  q.opts.forEach(function(opt,i){
+    var sel=respostas[qAtual]===i?' sel':'';
+    html+='<button class="q-opt'+sel+'" id="op'+i+'" onclick="escolher('+i+')">';
+    html+='<div class="q-opt-letra">'+letras[i]+'</div>';
+    html+='<div class="q-opt-texto">'+opt+'</div>';
+    html+='</button>';
+  });
+  html+='</div>';
+  document.getElementById('qCorpo').innerHTML=html;
+  document.getElementById('qCorpo').scrollTop=0;
+}
+
+function escolher(i){
+  respostas[qAtual]=i;
+  for(var j=0;j<4;j++){
+    var el=document.getElementById('op'+j);
+    if(el) el.className='q-opt'+(j===i?' sel':'');
+  }
+  document.getElementById('btnCont').disabled=false;
+  document.getElementById('qDica').textContent='';
+}
+
+function avancar(){
+  if(respostas[qAtual]===undefined) return;
+  if(qAtual===QS.length-1){ calcular(); return; }
+  qAtual++;
+  renderQ();
+}
+
+function voltar(){
+  if(qAtual===0) return;
+  qAtual--;
+  renderQ();
+}
+
+function calcular(){
+  // Reconstruir scores por bloco original
+  var blocoSc=BLOCOS.map(function(b,bi){
+    var cx=0,fq=0,ip=0;
+    // Encontrar as 3 questões deste bloco nas respostas embaralhadas
+    QS.forEach(function(q,qi){
+      if(q.bloIdx===bi){
+        var ans=respostas[qi];
+        if(ans===undefined) return;
+        var sc=q.sc[ans];
+        if(q.crit==='cx') cx=sc;
+        else if(q.crit==='fq') fq=sc;
+        else ip=sc;
+      }
+    });
+    return {comp:b.comp,dim:b.dim,cx:cx,fq:fq,ip:ip,total:cx+fq+ip};
+  });
+
+  var dimTotals={mental:0,pessoas:0,mudancas:0,resultados:0};
+  blocoSc.forEach(function(b){ dimTotals[b.dim]+=b.total; });
+  var totalGeral=Object.values(dimTotals).reduce(function(a,b){return a+b;},0);
+  var keyGeral=classificar(totalGeral);
+  var prof=PROFILES[keyGeral];
+
+  // Preencher header
+  document.getElementById('resName').textContent=nomeJogador;
+  var ch=document.getElementById('classHeader');
+  ch.className='class-header '+keyGeral;
+  var ct=document.getElementById('classTitle');
+  ct.className='class-title '+keyGeral;
+  ct.textContent=prof.label;
+  document.getElementById('classScore').textContent='Score total: '+totalGeral+' / 576';
+  document.getElementById('classDesc').textContent=prof.desc;
+
+  // 3 PILARES — Frequência, Complexidade, Impacto
+  var pilarCX=0,pilarFQ=0,pilarIP=0;
+  blocoSc.forEach(function(b){ pilarCX+=b.cx; pilarFQ+=b.fq; pilarIP+=b.ip; });
+  // Max por pilar: 12 blocos × 12 = 144 para CX e FQ; 12 × 24 = 288 para IP
+  var maxCX=144, maxFQ=144, maxIP=288;
+  var pctCX=Math.round(pilarCX/maxCX*100);
+  var pctFQ=Math.round(pilarFQ/maxFQ*100);
+  var pctIP=Math.round(pilarIP/maxIP*100);
+
+  // Classificar cada pilar individualmente
+  // Escala proporcional ao max de cada um
+  function classifPilar(score,max){
+    var pct=score/max;
+    if(pct<=0.417) return 'potencial';
+    if(pct<0.972) return 'consistente';
+    return 'diferenciado';
+  }
+  var keyCX=classifPilar(pilarCX,maxCX);
+  var keyFQ=classifPilar(pilarFQ,maxFQ);
+  var keyIP=classifPilar(pilarIP,maxIP);
+
+  var pilaresGrid=document.getElementById('pilaresGrid');
+  pilaresGrid.innerHTML='';
+  var pilares=[
+    {nome:'Complexidade',key:keyCX,pct:pctCX,score:pilarCX,max:maxCX,cls:'mental'},
+    {nome:'Frequência',key:keyFQ,pct:pctFQ,score:pilarFQ,max:maxFQ,cls:'pessoas'},
+    {nome:'Impacto',key:keyIP,pct:pctIP,score:pilarIP,max:maxIP,cls:'mudancas'}
+  ];
+  pilares.forEach(function(p){
+    var div=document.createElement('div');
+    div.className='pilar-card '+p.cls;
+    div.innerHTML='<div class="pilar-nome">'+p.nome+'</div>'
+      +'<div class="pilar-classe '+p.key+'">'+PROFILES[p.key].label+'</div>'
+      +'<div class="pilar-score">'+p.score+' / '+p.max+' pts ('+p.pct+'%)</div>'
+      +'<div class="pilar-bar-bg"><div class="pilar-bar-fill '+p.cls+'" id="pb_'+p.cls+'" style="width:0%"></div></div>';
+    pilaresGrid.appendChild(div);
+  });
+
+  // Dimensões
+  var maxPD=144;
+  var dc=document.getElementById('dimCards');
+  dc.innerHTML='';
+  DIMS.forEach(function(d){
+    var sc=dimTotals[d]||0;
+    var pct=Math.round(sc/maxPD*100);
+    var dKey=classificar(sc/maxPD*576);
+    var dLabel=PROFILES[dKey].label;
+    var card=document.createElement('div');
+    card.className='dim-result-card '+d;
+    card.innerHTML='<div class="dim-result-top"><div class="dim-result-name">'+DNOMES[d]+'</div><div class="dim-result-pct">'+pct+'%</div></div>'
+      +'<div class="dim-bar-bg"><div class="dim-bar-fill '+d+'" id="dbar_'+d+'"></div></div>'
+      +'<div class="dim-result-class">'+sc+' pts — '+dLabel+'</div>';
+    dc.appendChild(card);
+  });
+
+  // Tabela competências
+  var cr=document.getElementById('compRows');
+  cr.innerHTML='';
+  blocoSc.forEach(function(b){
+    var row=document.createElement('div');
+    row.className='comp-row';
+    row.innerHTML='<div class="cn">'+b.comp+'</div><div class="cv cx">'+b.cx+'</div><div class="cv fq">'+b.fq+'</div><div class="cv ip">'+b.ip+'</div>';
+    cr.appendChild(row);
+  });
+
+  mostrarTela('tResultado');
+
+  // Animar barras
+  setTimeout(function(){
+    DIMS.forEach(function(d){
+      var sc=dimTotals[d]||0;
+      var pct=Math.round(sc/maxPD*100);
+      var bar=document.getElementById('dbar_'+d);
+      if(bar) bar.style.width=pct+'%';
+    });
+    // Pilares
+    var ps=[{id:'pb_mental',pct:pctCX},{id:'pb_pessoas',pct:pctFQ},{id:'pb_mudancas',pct:pctIP}];
+    ps.forEach(function(p){
+      var el=document.getElementById(p.id);
+      if(el) el.style.width=p.pct+'%';
+    });
+  },350);
+}
+
+function imprimirResultado(){
+  window.print();
+}
+
+function reiniciar(){
+  qAtual=0; respostas={}; nomeJogador='';
+  document.getElementById('nameInput').value='';
+  document.getElementById('btnStart').disabled=true;
+  mostrarTela('tIntro');
+  document.getElementById('tIntro').scrollTop=0;
+}
+
+function mostrarTela(id){
+  document.querySelectorAll('.tela').forEach(function(t){t.classList.remove('ativa');});
+  document.getElementById(id).classList.add('ativa');
+  if(id==='tResultado') document.getElementById('tResultado').scrollTop=0;
+}
+</script>
+</body>
+</html>
